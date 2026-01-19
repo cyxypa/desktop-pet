@@ -11,11 +11,13 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QMenu,
 )
-from PyQt5.QtCore import Qt, QTimer, QPoint
-from PyQt5.QtGui import QPixmap, QFont, QTransform
+from PyQt5.QtCore import Qt, QTimer, QPoint, QRect
+from PyQt5.QtGui import QPixmap, QFont, QTransform, QImage
 from api_client import ApiWorker, ApiClient  # 需确保 api_client 模块及类正确
 from Settings.settings_dialog import SettingsDialog
 from Settings.settings_store import load_settings, save_settings
+from Plugins.base import AppContext
+from Plugins.manager import PluginManager
 
 
 class DesktopPet(QMainWindow):
@@ -74,7 +76,12 @@ class DesktopPet(QMainWindow):
         self.initUI()
         self.loadAnimations()
         self.setupAnimation()
+        # 初始化设置
         self.apply_settings(self.settings.to_dict())
+        # 加载插件
+        self.app_ctx = AppContext(pet=self, logger=print)
+        self.plugin_manager = PluginManager(self.app_ctx, plugins_package="Plugins")
+        self.plugin_manager.load_all()
 
     def initUI(self):
         # 窗口属性
@@ -309,6 +316,8 @@ class DesktopPet(QMainWindow):
 
     def show_context_menu(self, global_pos):
         menu = QMenu(self)
+        if hasattr(self, "plugin_manager"):
+            self.plugin_manager.extend_context_menu(menu)
         act_settings = menu.addAction("设置")
         act_exit = menu.addAction("退出")
 
@@ -547,6 +556,45 @@ class DesktopPet(QMainWindow):
         self.api_client.save_to_history(user_input, response)
         self.output_box.setText(response)
         self.api_worker = None
+
+    def get_visible_rect_global(self, alpha_threshold: int = 10) -> QRect:
+        """
+        返回当前显示帧（label.pixmap）的非透明像素包围盒（全局坐标）。
+        如果取不到 pixmap，就回退为桌宠窗口整体矩形。
+        """
+        # label 左上角的全局坐标
+        label_global = self.label.mapToGlobal(QPoint(0, 0))
+
+        pm = self.label.pixmap()
+        if pm is None or pm.isNull():
+            top_left = self.mapToGlobal(QPoint(0, 0))
+            return QRect(top_left, self.size())
+
+        img = pm.toImage().convertToFormat(QImage.Format_ARGB32)
+        w, h = img.width(), img.height()
+
+        min_x, min_y = w, h
+        max_x, max_y = -1, -1
+
+        # 扫描 alpha 通道（说话不是高频操作，这点开销完全能接受）
+        for y in range(h):
+            for x in range(w):
+                if (img.pixel(x, y) >> 24) & 0xFF > alpha_threshold:
+                    if x < min_x:
+                        min_x = x
+                    if y < min_y:
+                        min_y = y
+                    if x > max_x:
+                        max_x = x
+                    if y > max_y:
+                        max_y = y
+
+        # 如果全透明，回退为整个 pixmap
+        if max_x < 0:
+            return QRect(label_global, pm.size())
+
+        local_rect = QRect(min_x, min_y, max_x - min_x + 1, max_y - min_y + 1)
+        return QRect(label_global + local_rect.topLeft(), local_rect.size())
 
 
 if __name__ == "__main__":
