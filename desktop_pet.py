@@ -13,7 +13,6 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt, QTimer, QPoint, QRect
 from PyQt5.QtGui import QPixmap, QFont, QTransform, QImage
-from api_client import ApiWorker, ApiClient  # 需确保 api_client 模块及类正确
 from Settings.settings_dialog import SettingsDialog
 from Settings.settings_store import load_settings, save_settings
 from Plugins.base import AppContext
@@ -23,12 +22,6 @@ from Plugins.manager import PluginManager
 class DesktopPet(QMainWindow):
     def __init__(self):
         super().__init__()
-        # API 客户端初始化
-        # self.api_client = ApiClient(
-        #    api_key="YOUR_API_KEY",
-        #    base_url="https://api.deepseek.com",
-        #    history_file="chat_history.json"
-        # )
 
         # 初始化变量
         self.input_dialog = None
@@ -389,11 +382,6 @@ class DesktopPet(QMainWindow):
             self.move(self.pos() + event.globalPos() - self.dragPos)
             self.dragPos = event.globalPos()
 
-            # 同步移动输入框
-            if self.input_dialog and self.input_dialog.isVisible():
-                dialog_x = self.get_side_position(self.input_width)
-                self.input_dialog.move(dialog_x, self.input_dialog.y())
-
             event.accept()
 
     def mouseReleaseEvent(self, event):
@@ -401,161 +389,10 @@ class DesktopPet(QMainWindow):
         if event.button() == Qt.LeftButton:
             # 如果不是拖动状态且处于悬停状态，才显示自定义交互界面
             if not self.is_dragging and self.is_hovered:
-                self.showCustomDialog()
+                return
             # 重置拖动状态
             self.is_dragging = False
             event.accept()
-
-    def get_side_position(self, base_width):
-        """计算对话框的 X 坐标位置（左右侧自动切换）"""
-        pet_center_x = self.geometry().x() + self.pet_width // 2  # 桌宠中心点 X 坐标
-
-        if pet_center_x < self.screen_mid:
-            # 左半边：对话框在桌宠右侧
-            return self.geometry().x() + self.pet_width + 10  # 右侧 +10px 间距
-        else:
-            # 右半边：对话框在桌宠左侧
-            return self.geometry().x() - base_width - 10  # 左侧 - 宽度 -10px 间距
-
-    def get_output_y_position(self):
-        """计算输出框 Y 坐标（桌宠头顶位置）"""
-        return self.geometry().y() - self.output_height - 10  # 桌宠顶部向上 10px
-
-    def showCustomDialog(self):
-        """显示自定义交互界面，包含输入框、输出框和关闭按钮"""
-        if self.input_dialog and self.input_dialog.isVisible():
-            self.input_dialog.close()
-
-        self.input_dialog = QWidget(self, Qt.Dialog | Qt.FramelessWindowHint)
-        self.input_dialog.setStyleSheet(
-            """
-            background-color: rgba(255, 255, 255, 90);  /* 半透明白色背景 */
-            border: 2px solid rgba(0, 0, 0, 150);       /* 黑色边框 */
-            border-radius: 10px;                        /* 圆角 */
-        """
-        )
-
-        # 获取屏幕大小
-        screen_geometry = QApplication.desktop().screenGeometry()
-        screen_width = screen_geometry.width()
-        screen_height = screen_geometry.height()
-
-        # 设置输入框和输出框大小占屏幕的一半
-        self.input_width = screen_width // 2
-        self.input_height = screen_height // 2
-
-        # 输入框
-        self.input_box = QLineEdit(self.input_dialog)
-        self.input_box.setPlaceholderText("请输入内容...")
-        font = QFont()
-        font.setFamily("Microsoft YaHei")
-        font.setPointSize(12)
-        self.input_box.setFont(font)
-        self.input_box.setStyleSheet(
-            """
-            background-color: rgba(255, 255, 255, 100); /* 半透明白色背景 */
-            border: 1px solid rgba(0, 0, 0, 100);       /* 黑色边框 */
-            padding: 10px;                              /* 内边距 */
-            border-radius: 5px;                         /* 圆角 */
-            color: #000000;                             /* 黑色字体 */
-        """
-        )
-        self.input_box.returnPressed.connect(self.submitToDeepSeek)
-
-        # 输出框
-        self.output_box = QTextEdit(self.input_dialog)
-        self.output_box.setReadOnly(True)
-        self.output_box.setStyleSheet(
-            """
-            background-color: rgba(255, 255, 255, 80); /* 半透明白色背景 */
-            border: 1px solid rgba(0, 0, 0, 100);       /* 黑色边框 */
-            padding: 10px;                              /* 内边距 */
-            border-radius: 5px;                         /* 圆角 */
-            color: #000000;                             /* 黑色字体 */
-        """
-        )
-        self.output_box.setPlaceholderText("等待回复...")
-
-        # 发送按钮
-        send_btn = QPushButton("发送", self.input_dialog)
-        send_btn.setStyleSheet(
-            """
-            background-color: rgba(0, 128, 0, 90);      /* 半透明绿色背景 */
-            color: #FFFFFF;                             /* 白色字体 */
-            border: none;                               /* 无边框 */
-            padding: 8px 16px;                          /* 内边距 */
-            border-radius: 5px;                         /* 圆角 */
-        """
-        )
-        send_btn.clicked.connect(self.submitToDeepSeek)
-
-        # 关闭按钮
-        close_btn = QPushButton("关闭", self.input_dialog)
-        close_btn.setStyleSheet(
-            """
-            background-color: rgba(255, 0, 0, 90);      /* 半透明红色背景 */
-            color: #FFFFFF;                             /* 白色字体 */
-            border: none;                               /* 无边框 */
-            padding: 8px 16px;                          /* 内边距 */
-            border-radius: 5px;                         /* 圆角 */
-        """
-        )
-        close_btn.clicked.connect(self.closeDialog)
-
-        # 布局
-        main_layout = QVBoxLayout()
-        input_layout = QHBoxLayout()
-        input_layout.addWidget(self.input_box)
-        input_layout.addWidget(send_btn)
-        input_layout.addWidget(close_btn)
-        main_layout.addLayout(input_layout)
-        main_layout.addWidget(self.output_box)
-
-        self.input_dialog.setLayout(main_layout)
-
-        # 调整输入框和输出框的位置和大小（居中显示）
-        dialog_x = (screen_width - self.input_width) // 2
-        dialog_y = (screen_height - self.input_height) // 2
-        self.input_dialog.setGeometry(
-            dialog_x, dialog_y, self.input_width, self.input_height
-        )
-        self.input_dialog.show()
-
-    def closeDialog(self):
-        """关闭输入框和输出框"""
-        if self.input_dialog and self.input_dialog.isVisible():
-            self.input_dialog.close()
-            self.input_dialog = None  # 清理引用
-
-    def submitToDeepSeek(self):
-        """处理输入框内容并发送到 API"""
-        text = self.input_box.text()
-        if not text.strip():
-            self.output_box.setText("请输入有效内容！")
-            return
-
-        self.output_box.setText("正在处理，请稍候...")
-
-        if text.strip() == "查看历史":
-            self.is_viewing_history = True
-            history_text = self.api_client.get_history_text()
-            self.output_box.setHtml(history_text)
-            return
-
-        self.is_viewing_history = False
-        self.api_worker = ApiWorker(
-            self.api_client.client, text, self.api_client.history_file
-        )
-        self.api_worker.result_ready.connect(
-            lambda response: self.handle_api_response(text, response)
-        )
-        self.api_worker.start()
-
-    def handle_api_response(self, user_input, response):
-        """处理 API 响应并更新输出框内容"""
-        self.api_client.save_to_history(user_input, response)
-        self.output_box.setText(response)
-        self.api_worker = None
 
     def get_visible_rect_global(self, alpha_threshold: int = 10) -> QRect:
         """

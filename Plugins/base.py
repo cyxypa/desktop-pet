@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
 from PyQt5.QtWidgets import QMenu
+from pathlib import Path
+import importlib
 
 
 @dataclass
@@ -35,3 +37,25 @@ class PluginBase:
     def extend_context_menu(self, menu: QMenu) -> None:
         """桌宠右键菜单构建时调用，插件可往里加 action"""
         return
+
+    def config_path(self) -> Path:
+        """默认：插件目录/config.json"""
+        mod = importlib.import_module(self.__class__.__module__)
+        return Path(mod.__file__).resolve().parent / "config.json"
+
+    def default_config(self) -> dict:
+        """默认配置（用于首次生成或字段缺失时补齐）"""
+        return {}
+
+    def load_config(self, cfg: dict) -> None:
+        """PluginManager 加载 json 后会调用，插件自行保存到 self.cfg"""
+        self.cfg = cfg
+
+    # --- 给 Settings “插件”页用 ---
+    def create_settings_widget(self, parent=None):
+        """返回一个 QWidget(通常是 QGroupBox)，用于塞进设置窗口的插件页"""
+        return None
+
+    def collect_config_from_widget(self) -> dict:
+        """点击保存时调用：从控件读值，返回 dict，用于写回 config.json"""
+        return getattr(self, "cfg", {}) if hasattr(self, "cfg") else {}

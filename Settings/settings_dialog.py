@@ -1,5 +1,5 @@
 # Settings/settings_dialog.py
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QVBoxLayout
 from PyQt5.QtCore import QSignalBlocker, pyqtSignal
 from pathlib import Path
 from Settings.settings_window_ui import Ui_settings_window
@@ -14,6 +14,11 @@ class SettingsDialog(QDialog):
         super().__init__(parent)
         self.ui = Ui_settings_window()
         self.ui.setupUi(self)
+        if self.ui.scrollAreaWidgetContents_2.layout() is None:
+            layout = QVBoxLayout(self.ui.scrollAreaWidgetContents_2)
+            layout.setObjectName("pluginsLayout")
+            layout.setContentsMargins(10, 10, 10, 10)
+            layout.setSpacing(10)
         self.setWindowTitle("设置")
         current = load_settings().to_dict() if current is None else current
         self.populate_characters()  # 获取角色选项
