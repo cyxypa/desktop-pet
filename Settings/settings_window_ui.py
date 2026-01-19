@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\cyxypa\Desktop\desktop pet\settings_window.ui'
+# Form implementation generated from reading ui file 'Settings\settings_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -27,7 +27,7 @@ class Ui_settings_window(object):
         self.setting_scrollArea.setWidgetResizable(True)
         self.setting_scrollArea.setObjectName("setting_scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 393, 426))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 393, 425))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.model_GroupBox = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.model_GroupBox.setGeometry(QtCore.QRect(20, 10, 360, 100))
@@ -43,11 +43,15 @@ class Ui_settings_window(object):
         font.setPointSize(9)
         self.character_label.setFont(font)
         self.character_label.setObjectName("character_label")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.character_label)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.character_label
+        )
         self.character_comboBox = QtWidgets.QComboBox(self.model_GroupBox)
         self.character_comboBox.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.character_comboBox.setObjectName("character_comboBox")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.character_comboBox)
+        self.formLayout.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.character_comboBox
+        )
         self.skin_label = QtWidgets.QLabel(self.model_GroupBox)
         font = QtGui.QFont()
         font.setPointSize(9)
@@ -56,7 +60,9 @@ class Ui_settings_window(object):
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.skin_label)
         self.skin_comboBox = QtWidgets.QComboBox(self.model_GroupBox)
         self.skin_comboBox.setObjectName("skin_comboBox")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.skin_comboBox)
+        self.formLayout.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.skin_comboBox
+        )
         self.action_GroupBox = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
         self.action_GroupBox.setGeometry(QtCore.QRect(20, 120, 360, 191))
         font = QtGui.QFont()
@@ -71,17 +77,23 @@ class Ui_settings_window(object):
         font.setPointSize(9)
         self.ifmove_label.setFont(font)
         self.ifmove_label.setObjectName("ifmove_label")
-        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.ifmove_label)
+        self.formLayout_2.setWidget(
+            0, QtWidgets.QFormLayout.LabelRole, self.ifmove_label
+        )
         self.ifmove_checkBox = QtWidgets.QCheckBox(self.action_GroupBox)
         self.ifmove_checkBox.setText("")
         self.ifmove_checkBox.setObjectName("ifmove_checkBox")
-        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.ifmove_checkBox)
+        self.formLayout_2.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.ifmove_checkBox
+        )
         self.speed_label = QtWidgets.QLabel(self.action_GroupBox)
         font = QtGui.QFont()
         font.setPointSize(9)
         self.speed_label.setFont(font)
         self.speed_label.setObjectName("speed_label")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.speed_label)
+        self.formLayout_2.setWidget(
+            1, QtWidgets.QFormLayout.LabelRole, self.speed_label
+        )
         self.speed_Slider = QtWidgets.QSlider(self.action_GroupBox)
         self.speed_Slider.setMinimum(1)
         self.speed_Slider.setMaximum(10)
@@ -89,13 +101,17 @@ class Ui_settings_window(object):
         self.speed_Slider.setTickPosition(QtWidgets.QSlider.TicksBelow)
         self.speed_Slider.setTickInterval(1)
         self.speed_Slider.setObjectName("speed_Slider")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.speed_Slider)
+        self.formLayout_2.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.speed_Slider
+        )
         self.speedprobably_label = QtWidgets.QLabel(self.action_GroupBox)
         font = QtGui.QFont()
         font.setPointSize(9)
         self.speedprobably_label.setFont(font)
         self.speedprobably_label.setObjectName("speedprobably_label")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.speedprobably_label)
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.LabelRole, self.speedprobably_label
+        )
         self.speedprobably_Slider = QtWidgets.QSlider(self.action_GroupBox)
         self.speedprobably_Slider.setMinimum(0)
         self.speedprobably_Slider.setMaximum(100)
@@ -103,72 +119,86 @@ class Ui_settings_window(object):
         self.speedprobably_Slider.setTickPosition(QtWidgets.QSlider.TicksBelow)
         self.speedprobably_Slider.setTickInterval(10)
         self.speedprobably_Slider.setObjectName("speedprobably_Slider")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.speedprobably_Slider)
+        self.formLayout_2.setWidget(
+            2, QtWidgets.QFormLayout.FieldRole, self.speedprobably_Slider
+        )
         self.minmovetime_label = QtWidgets.QLabel(self.action_GroupBox)
         font = QtGui.QFont()
         font.setPointSize(9)
         self.minmovetime_label.setFont(font)
         self.minmovetime_label.setObjectName("minmovetime_label")
-        self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.minmovetime_label)
+        self.formLayout_2.setWidget(
+            3, QtWidgets.QFormLayout.LabelRole, self.minmovetime_label
+        )
         self.minmovetime_spinBox = QtWidgets.QSpinBox(self.action_GroupBox)
         self.minmovetime_spinBox.setMinimum(500)
         self.minmovetime_spinBox.setMaximum(20000)
         self.minmovetime_spinBox.setObjectName("minmovetime_spinBox")
-        self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.minmovetime_spinBox)
+        self.formLayout_2.setWidget(
+            3, QtWidgets.QFormLayout.FieldRole, self.minmovetime_spinBox
+        )
         self.maxmovetime_label = QtWidgets.QLabel(self.action_GroupBox)
         font = QtGui.QFont()
         font.setPointSize(9)
         self.maxmovetime_label.setFont(font)
         self.maxmovetime_label.setObjectName("maxmovetime_label")
-        self.formLayout_2.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.maxmovetime_label)
+        self.formLayout_2.setWidget(
+            4, QtWidgets.QFormLayout.LabelRole, self.maxmovetime_label
+        )
         self.maxmovetime_spinBox = QtWidgets.QSpinBox(self.action_GroupBox)
         self.maxmovetime_spinBox.setMinimum(1000)
         self.maxmovetime_spinBox.setMaximum(20000)
         self.maxmovetime_spinBox.setProperty("value", 5000)
         self.maxmovetime_spinBox.setObjectName("maxmovetime_spinBox")
-        self.formLayout_2.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.maxmovetime_spinBox)
-        self.model_GroupBox_2 = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
-        self.model_GroupBox_2.setGeometry(QtCore.QRect(20, 320, 360, 100))
+        self.formLayout_2.setWidget(
+            4, QtWidgets.QFormLayout.FieldRole, self.maxmovetime_spinBox
+        )
+        self.window_GroupBox = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
+        self.window_GroupBox.setGeometry(QtCore.QRect(20, 320, 360, 100))
         font = QtGui.QFont()
         font.setPointSize(12)
-        self.model_GroupBox_2.setFont(font)
-        self.model_GroupBox_2.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
-        self.model_GroupBox_2.setObjectName("model_GroupBox_2")
-        self.formLayout_3 = QtWidgets.QFormLayout(self.model_GroupBox_2)
+        self.window_GroupBox.setFont(font)
+        self.window_GroupBox.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        self.window_GroupBox.setObjectName("window_GroupBox")
+        self.formLayout_3 = QtWidgets.QFormLayout(self.window_GroupBox)
         self.formLayout_3.setObjectName("formLayout_3")
-        self.character_label_2 = QtWidgets.QLabel(self.model_GroupBox_2)
+        self.size_label = QtWidgets.QLabel(self.window_GroupBox)
         font = QtGui.QFont()
         font.setPointSize(9)
-        self.character_label_2.setFont(font)
-        self.character_label_2.setObjectName("character_label_2")
-        self.formLayout_3.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.character_label_2)
-        self.fps_label_2 = QtWidgets.QLabel(self.model_GroupBox_2)
+        self.size_label.setFont(font)
+        self.size_label.setObjectName("size_label")
+        self.formLayout_3.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.size_label)
+        self.fps_label = QtWidgets.QLabel(self.window_GroupBox)
         font = QtGui.QFont()
         font.setPointSize(9)
-        self.fps_label_2.setFont(font)
-        self.fps_label_2.setObjectName("fps_label_2")
-        self.formLayout_3.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.fps_label_2)
-        self.fps_spinBox_2 = QtWidgets.QSpinBox(self.model_GroupBox_2)
-        self.fps_spinBox_2.setMinimum(10)
-        self.fps_spinBox_2.setMaximum(60)
-        self.fps_spinBox_2.setProperty("value", 30)
-        self.fps_spinBox_2.setObjectName("fps_spinBox_2")
-        self.formLayout_3.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.fps_spinBox_2)
-        self.fps_spinBox_3 = QtWidgets.QSpinBox(self.model_GroupBox_2)
-        self.fps_spinBox_3.setMinimum(100)
-        self.fps_spinBox_3.setMaximum(800)
-        self.fps_spinBox_3.setProperty("value", 100)
-        self.fps_spinBox_3.setObjectName("fps_spinBox_3")
-        self.formLayout_3.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.fps_spinBox_3)
+        self.fps_label.setFont(font)
+        self.fps_label.setObjectName("fps_label")
+        self.formLayout_3.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.fps_label)
+        self.fps_spinBox = QtWidgets.QSpinBox(self.window_GroupBox)
+        self.fps_spinBox.setMinimum(10)
+        self.fps_spinBox.setMaximum(60)
+        self.fps_spinBox.setProperty("value", 30)
+        self.fps_spinBox.setObjectName("fps_spinBox")
+        self.formLayout_3.setWidget(
+            1, QtWidgets.QFormLayout.FieldRole, self.fps_spinBox
+        )
+        self.size_spinBox = QtWidgets.QSpinBox(self.window_GroupBox)
+        self.size_spinBox.setMinimum(100)
+        self.size_spinBox.setMaximum(800)
+        self.size_spinBox.setProperty("value", 100)
+        self.size_spinBox.setObjectName("size_spinBox")
+        self.formLayout_3.setWidget(
+            0, QtWidgets.QFormLayout.FieldRole, self.size_spinBox
+        )
         self.setting_scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.verticalLayout.addWidget(self.setting_scrollArea)
         self.button_widget = QtWidgets.QWidget(self.setting_tab)
         self.button_widget.setObjectName("button_widget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.button_widget)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.pushButton_2 = QtWidgets.QPushButton(self.button_widget)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.horizontalLayout.addWidget(self.pushButton_2)
+        self.save_Button = QtWidgets.QPushButton(self.button_widget)
+        self.save_Button.setObjectName("save_Button")
+        self.horizontalLayout.addWidget(self.save_Button)
         self.restore_Button = QtWidgets.QPushButton(self.button_widget)
         self.restore_Button.setObjectName("restore_Button")
         self.horizontalLayout.addWidget(self.restore_Button)
@@ -207,12 +237,18 @@ class Ui_settings_window(object):
         self.minmovetime_spinBox.setSuffix(_translate("settings_window", "ms"))
         self.maxmovetime_label.setText(_translate("settings_window", "最大移动时长:"))
         self.maxmovetime_spinBox.setSuffix(_translate("settings_window", "ms"))
-        self.model_GroupBox_2.setTitle(_translate("settings_window", "窗口设置"))
-        self.character_label_2.setText(_translate("settings_window", "桌宠尺寸:"))
-        self.fps_label_2.setText(_translate("settings_window", "动画帧率:"))
-        self.fps_spinBox_2.setSuffix(_translate("settings_window", "fps"))
-        self.fps_spinBox_3.setSuffix(_translate("settings_window", "px"))
-        self.pushButton_2.setText(_translate("settings_window", "保存设置"))
+        self.window_GroupBox.setTitle(_translate("settings_window", "窗口设置"))
+        self.size_label.setText(_translate("settings_window", "桌宠尺寸:"))
+        self.fps_label.setText(_translate("settings_window", "动画帧率:"))
+        self.fps_spinBox.setSuffix(_translate("settings_window", "fps"))
+        self.size_spinBox.setSuffix(_translate("settings_window", "px"))
+        self.save_Button.setText(_translate("settings_window", "保存设置"))
         self.restore_Button.setText(_translate("settings_window", "恢复默认"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.setting_tab), _translate("settings_window", "设置"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.plugin_tab), _translate("settings_window", "插件"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.setting_tab),
+            _translate("settings_window", "设置"),
+        )
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.plugin_tab),
+            _translate("settings_window", "插件"),
+        )

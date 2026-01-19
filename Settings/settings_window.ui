@@ -35,7 +35,7 @@
             <x>0</x>
             <y>0</y>
             <width>393</width>
-            <height>426</height>
+            <height>425</height>
            </rect>
           </property>
           <widget class="QGroupBox" name="model_GroupBox">
@@ -252,7 +252,7 @@
             </item>
            </layout>
           </widget>
-          <widget class="QGroupBox" name="model_GroupBox_2">
+          <widget class="QGroupBox" name="window_GroupBox">
            <property name="geometry">
             <rect>
              <x>20</x>
@@ -274,7 +274,7 @@
            </property>
            <layout class="QFormLayout" name="formLayout_3">
             <item row="0" column="0">
-             <widget class="QLabel" name="character_label_2">
+             <widget class="QLabel" name="size_label">
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
@@ -286,7 +286,7 @@
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="fps_label_2">
+             <widget class="QLabel" name="fps_label">
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
@@ -298,7 +298,7 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QSpinBox" name="fps_spinBox_2">
+             <widget class="QSpinBox" name="fps_spinBox">
               <property name="suffix">
                <string>fps</string>
               </property>
@@ -314,7 +314,7 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QSpinBox" name="fps_spinBox_3">
+             <widget class="QSpinBox" name="size_spinBox">
               <property name="suffix">
                <string>px</string>
               </property>
@@ -338,7 +338,7 @@
         <widget class="QWidget" name="button_widget" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="save_Button">
             <property name="text">
              <string>保存设置</string>
             </property>

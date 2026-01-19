@@ -15,6 +15,7 @@ from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QPixmap, QFont, QTransform
 from api_client import ApiWorker, ApiClient  # 需确保 api_client 模块及类正确
 from Settings.settings_dialog import SettingsDialog
+from Settings.settings_store import load_settings, save_settings
 
 
 class DesktopPet(QMainWindow):
@@ -37,6 +38,7 @@ class DesktopPet(QMainWindow):
         self.is_dragging = False  # 标记是否正在拖动
         self.input_hovered = False  # 标记输入框是否被鼠标悬停
         self._settings_dialog = None
+        self.settings = load_settings()
 
         # 移动与位置相关参数
         self.speed = 2  # 移动速度（像素/帧）
@@ -63,10 +65,16 @@ class DesktopPet(QMainWindow):
         self.move_timer.setSingleShot(True)  # 是否单次触发
         self.move_timer.timeout.connect(self.stop_move)
 
+        # ---------- 滚动保存定时器 ----------
+        self._save_settings_timer = QTimer(self)
+        self._save_settings_timer.setSingleShot(True)
+        self._save_settings_timer.timeout.connect(self._flush_settings_to_disk)
+
         # 初始化 UI 和动画
         self.initUI()
         self.loadAnimations()
         self.setupAnimation()
+        self.apply_settings(self.settings.to_dict())
 
     def initUI(self):
         # 窗口属性
@@ -87,16 +95,18 @@ class DesktopPet(QMainWindow):
         self.label = QLabel(self)
         self.label.setGeometry(0, 0, self.pet_width, self.pet_height)
         self.setCentralWidget(self.label)
+        # 让鼠标事件（含滚轮）由主窗口处理，避免 QLabel 抢事件
+        self.label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
 
+        # 有些环境下更稳（不是必须）
+        self.setFocusPolicy(Qt.StrongFocus)
         # 鼠标跟踪
         self.is_hovered = False
         self.setMouseTracking(True)
 
-    def loadAnimations(self):
+    def loadAnimations(self, character_name="阿米娅", skin_name="默认"):
         base = os.path.dirname(os.path.abspath(__file__))
         assets_base = os.path.join(base, "Assets")
-        character_name = "阿米娅"  # 假设资源文件夹命名为 "Pet"
-        skin_name = "于万千宇宙之中"  # 假设皮肤命名为 "Default"
         relax_pattern = os.path.join(
             assets_base, character_name, skin_name, "Relax", "*.png"
         )
@@ -233,6 +243,59 @@ class DesktopPet(QMainWindow):
         # self.is_moving = True
         self.current_frame = 0
 
+    def wheelEvent(self, event):
+        # 只在鼠标悬停桌宠上时允许滚轮缩放
+        if not self.is_hovered:
+            event.ignore()
+            return
+
+        delta = event.angleDelta().y()
+        if delta == 0:
+            return
+
+        step_px = 20  # 每一格滚轮调整多少像素（你可改 10/30）
+        new_size = self.pet_width + (step_px if delta > 0 else -step_px)
+
+        self.set_pet_size(new_size, persist=True)
+        event.accept()
+
+    def set_pet_size(self, new_size: int, persist: bool = False):
+        # 你 UI 里 size_spinBox 一般也会有范围，建议统一
+        MIN_SIZE, MAX_SIZE = 100, 800
+        new_size = max(MIN_SIZE, min(MAX_SIZE, int(new_size)))
+
+        old_size = self.pet_width
+        if new_size == old_size:
+            return
+
+        # 保持“底部贴地”的感觉：底边不动，只调整 y
+        bottom = self.y() + old_size
+        new_x = self.x()
+        new_y = bottom - new_size
+
+        # 防止越界
+        new_x = max(0, min(new_x, self.screen_width - new_size))
+        new_y = max(0, min(new_y, self.screen_geometry.height() - new_size))
+
+        self.pet_width = self.pet_height = new_size
+        self.setGeometry(new_x, new_y, new_size, new_size)
+        self.label.setGeometry(0, 0, new_size, new_size)
+
+        # 立即刷新一帧（不等下一次 timer tick）
+        self.current_frame = 0
+        self.updateAnimation()
+
+        # 可选：把滚轮缩放写回配置文件（做个 300ms 防抖）
+        if persist and hasattr(self, "settings") and self.settings is not None:
+            self.settings.pet_size = new_size
+            self._save_settings_timer.start(300)
+
+    def _flush_settings_to_disk(self):
+        try:
+            save_settings(self.settings)
+        except Exception as e:
+            print("保存设置失败：", e)
+
     def mousePressEvent(self, event):
         if event.button() == Qt.RightButton:
             self.show_context_menu(event.globalPos())
@@ -256,11 +319,58 @@ class DesktopPet(QMainWindow):
             QApplication.quit()
 
     def open_settings(self):
-        # 只显示界面，不做任何槽连接
-        self._settings_dialog = SettingsDialog(parent=self)
+        if self._settings_dialog and self._settings_dialog.isVisible():  # 避免多开
+            self._settings_dialog.raise_()
+            self._settings_dialog.activateWindow()
+            return
+        settings_dict = load_settings().to_dict()
+        self._settings_dialog = SettingsDialog(current=settings_dict, parent=self)
+
+        self._settings_dialog.settings_saved.connect(self.apply_settings)
+
         self._settings_dialog.show()
         self._settings_dialog.raise_()
         self._settings_dialog.activateWindow()
+
+    def apply_settings(self, s: dict):
+        # 行为参数
+        enable_move = bool(s.get("enable_move", True))
+        if not enable_move:
+            self.is_moving = False
+            self.relax_timer.stop()
+            self.move_timer.stop()
+        else:
+            if not self.relax_timer.isActive():
+                self.relax_timer.start()
+
+        self.speed = int(s.get("speed", self.speed))
+        self.move_probability = (
+            int(s.get("move_probability", int(self.move_probability * 100))) / 100.0
+        )
+        self.move_duration_ms_min = int(
+            s.get("move_duration_min", self.move_duration_ms_min)
+        )
+        self.move_duration_ms_max = int(
+            s.get("move_duration_max", self.move_duration_ms_max)
+        )
+
+        # FPS -> 动画定时器间隔
+        fps = int(s.get("fps", 30))
+        self.timer.setInterval(max(1, int(1000 / fps)))
+
+        # 尺寸
+        new_size = int(s.get("pet_size", self.pet_width))
+        self.set_pet_size(new_size, persist=False)
+
+        # ✅ 只有这里刷新皮肤/角色资源
+        new_character = s.get("character", None)
+        new_skin = s.get("skin", None)
+        if new_character and new_skin:
+            self.loadAnimations(character_name=new_character, skin_name=new_skin)
+            self.current_frame = 0
+        from Settings.settings_model import AppSettings
+
+        self.settings = AppSettings.from_dict(s)
 
     def mouseMoveEvent(self, event):
         if event.buttons() == Qt.LeftButton:

@@ -1,0 +1,11 @@
+{
+  "character": "阿米娅",
+  "skin": "默认",
+  "enable_move": true,
+  "speed": 2,
+  "move_probability": 35,
+  "move_duration_min": 3000,
+  "move_duration_max": 8000,
+  "fps": 30,
+  "pet_size": 420
+}
