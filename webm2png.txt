@@ -1,0 +1,4 @@
+webm转png序列：
+ffmpeg -i Relax-x1.webm ^
+-vf "scale=300:300:flags=lanczos,fps=30,colorkey=0x000000:0.08:0.05,format=rgba" ^
+"out\frame_%05d.png"
